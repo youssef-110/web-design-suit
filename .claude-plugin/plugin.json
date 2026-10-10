@@ -1,0 +1,11 @@
+{
+  "name": "web-design-suite",
+  "description": "One routed web design system: intake, layout, typography, color, motion (CSS, Motion, GSAP), interaction, accessibility, performance, mobile, redesign and brand, with an anti-slop checklist, a conflict-resolution table, browser verification and six workflow commands.",
+  "version": "1.0.0",
+  "author": { "name": "Youssef", "url": "https://github.com/youssef-110" },
+  "homepage": "https://github.com/youssef-110/web-design-suite",
+  "repository": "https://github.com/youssef-110/web-design-suite",
+  "license": "MIT",
+  "keywords": ["design", "frontend", "ui", "ux", "animation", "gsap", "accessibility", "anti-slop", "tailwind", "react"],
+  "skills": "./skills/"
+}

@@ -1,0 +1,163 @@
+<!doctype html>
+<!-- Fixture: the B1 brief (Slackwater) built with web-design-suite. Must pass the slop scan with zero findings. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light" />
+  <meta name="theme-color" content="#e4eef2" />
+  <title>Slackwater: tide windows for sea kayakers</title>
+  <meta name="description" content="Slackwater reads the nearest tide station, current and wind for your launch and marks the safe paddling windows on one chart." />
+  <style>
+    /* World: a nautical chart. Water tints, sounding blue, chart magenta for hazards. Strategy: Committed (COL1). */
+    :root {
+      --water: oklch(0.94 0.02 225);
+      --water-deep: oklch(0.86 0.04 225);
+      --ink: oklch(0.27 0.05 240);
+      --ink-muted: oklch(0.42 0.04 240);
+      --magenta: oklch(0.52 0.2 350);
+      --land: oklch(0.9 0.05 95);
+      --rule: oklch(0.27 0.05 240 / 0.18);
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+      --radius: 6px;
+      --space-1: 0.5rem; --space-2: 1rem; --space-3: 1.5rem; --space-4: 2rem; --space-6: 3rem; --space-8: 4rem; --space-12: 6rem;
+      --text-body: 1.0625rem;
+      --text-h2: clamp(1.75rem, 2vw + 1rem, 2.5rem);
+      --text-display: clamp(2.5rem, 2.6vw + 1.4rem, 4.25rem);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; -webkit-tap-highlight-color: transparent; }
+    body { margin: 0; background: var(--water); color: var(--ink); font: 400 var(--text-body)/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+    ::selection { background: var(--magenta); color: var(--water); }
+    a { color: inherit; text-underline-offset: 0.2em; text-decoration-thickness: 1px; }
+    :focus-visible { outline: 2px solid var(--magenta); outline-offset: 3px; border-radius: 2px; }
+    .skip { position: absolute; left: -999px; }
+    .skip:focus { left: var(--space-2); top: var(--space-2); background: var(--ink); color: var(--water); padding: var(--space-1) var(--space-2); }
+    .wrap { max-width: 72rem; margin: 0 auto; padding: 0 var(--space-3); }
+    header.top { display: flex; align-items: center; justify-content: space-between; height: 4rem; }
+    .mark { display: flex; align-items: center; gap: var(--space-1); min-height: 2.75rem; font-weight: 650; letter-spacing: -0.01em; text-decoration: none; }
+    nav ul { display: flex; gap: var(--space-3); list-style: none; margin: 0; padding: 0; }
+    nav a { display: inline-block; text-decoration: none; padding: 0.75rem 0; white-space: nowrap; }
+    .hero { display: grid; grid-template-columns: 1fr; gap: var(--space-4); align-content: center; padding: var(--space-6) 0 var(--space-8); }
+    h1 { font-size: var(--text-display); line-height: 1.04; letter-spacing: -0.025em; font-weight: 720; margin: 0; max-width: 17ch; text-wrap: balance; }
+    .lede { font-size: 1.1875rem; color: var(--ink-muted); max-width: 46ch; margin: var(--space-2) 0 0; text-wrap: pretty; }
+    .actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-4); }
+    .btn { display: inline-flex; align-items: center; min-height: 3rem; padding: 0 var(--space-3); border-radius: var(--radius); font: inherit; font-weight: 600; text-decoration: none; cursor: pointer; border: 1px solid var(--ink); touch-action: manipulation; transition: transform 160ms var(--ease-out), background-color 160ms var(--ease-out); }
+    .btn-primary { background: var(--ink); color: var(--water); }
+    .btn-quiet { background: transparent; color: var(--ink); }
+    .btn:active { transform: scale(0.97); }
+    @media (hover: hover) and (pointer: fine) { .btn-quiet:hover { background: var(--water-deep); } }
+    .chart { margin: 0; background: var(--water-deep); border-radius: var(--radius); padding: var(--space-3); }
+    .chart figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.25rem var(--space-2); font-size: 0.9375rem; color: var(--ink-muted); margin-bottom: var(--space-2); }
+    .chart svg { display: block; width: 100%; height: auto; }
+    .tide { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-dasharray: 1200; stroke-dashoffset: 0; }
+    .window { fill: var(--water); }
+    .hazard { fill: var(--magenta); }
+    .tick { font-size: 16px; fill: var(--ink-muted); font-variant-numeric: tabular-nums; }
+    @media (prefers-reduced-motion: no-preference) {
+      .js .tide { stroke-dashoffset: 1200; animation: draw 900ms var(--ease-out) 200ms forwards; }
+      @keyframes draw { to { stroke-dashoffset: 0; } }
+    }
+    section { padding: var(--space-12) 0; border-top: 1px solid var(--rule); }
+    h2 { font-size: var(--text-h2); line-height: 1.15; letter-spacing: -0.015em; margin: 0 0 var(--space-2); max-width: 22ch; text-wrap: balance; }
+    .launches { width: 100%; border-collapse: collapse; margin-top: var(--space-4); font-variant-numeric: tabular-nums; }
+    .launches th, .launches td { text-align: left; padding: var(--space-2) var(--space-2) var(--space-2) 0; vertical-align: top; }
+    .launches thead th { font-size: 0.9375rem; color: var(--ink-muted); font-weight: 500; border-bottom: 1px solid var(--rule); }
+    .flag { color: var(--magenta); font-weight: 600; }
+    ol.steps { display: grid; gap: var(--space-4); padding: 0; margin: var(--space-4) 0 0; list-style: none; counter-reset: s; }
+    ol.steps li { counter-increment: s; display: grid; grid-template-columns: 2.5rem 1fr; gap: var(--space-2); }
+    ol.steps li::before { content: counter(s); font-weight: 700; font-size: 1.5rem; line-height: 1.2; color: var(--magenta); }
+    ol.steps h3 { margin: 0 0 0.25rem; font-size: 1.1875rem; }
+    ol.steps p { margin: 0; color: var(--ink-muted); max-width: 60ch; }
+    .close { background: var(--ink); color: var(--water); }
+    .close .btn-primary { background: var(--water); color: var(--ink); border-color: var(--water); }
+    .close p { color: oklch(0.86 0.03 225); max-width: 48ch; }
+    footer { padding: var(--space-4) 0 calc(var(--space-4) + env(safe-area-inset-bottom, 0px)); font-size: 0.9375rem; color: var(--ink-muted); }
+    footer a { display: inline-block; padding: 0.75rem 0; }
+    footer .wrap { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); }
+    @media (min-width: 900px) {
+      .hero { min-height: calc(100svh - 4rem); grid-template-columns: 1fr 1fr; align-items: center; gap: var(--space-6); }
+      ol.steps { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 640px) {
+      nav ul { gap: var(--space-2); }
+      .nav-secondary { display: none; }
+      .launches thead { display: none; }
+      .launches tr { display: grid; padding: var(--space-2) 0; border-bottom: 1px solid var(--rule); }
+      .launches td { padding: 0.125rem 0; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="wrap">
+    <header class="top">
+      <a class="mark" href="/" aria-label="Slackwater home">
+        <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M1 13c3-4 6-4 10 0s7 4 10 0" fill="none" stroke="currentColor" stroke-width="2"/><path d="M1 18h20" stroke="currentColor" stroke-width="2"/></svg>
+        Slackwater
+      </a>
+      <nav aria-label="Primary"><ul><li><a href="#launches">Launches</a></li><li class="nav-secondary"><a href="#how">How it reads tides</a></li><li><a href="/sign-in">Sign in</a></li></ul></nav>
+    </header>
+
+    <main id="main">
+      <div class="hero">
+        <div>
+          <h1>Paddle the slack, not the rip.</h1>
+          <p class="lede">Slackwater reads the nearest tide station, current and wind for your launch, then marks the calm windows on one chart.</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="/plan">Plan a trip</a>
+            <a class="btn btn-quiet" href="#how">How it reads tides</a>
+          </div>
+        </div>
+        <figure class="chart" aria-labelledby="chart-cap">
+          <figcaption id="chart-cap"><span>Saturday at Kettle Cove, sample data</span><span>Slack 09:42 and 15:58</span></figcaption>
+          <svg viewBox="0 0 480 222" role="img" aria-label="Tide curve with two calm windows, at 09:42 and 15:58, and a strong ebb flagged between them">
+            <rect class="window" x="96" y="10" width="64" height="180" rx="4" />
+            <rect class="window" x="300" y="10" width="64" height="180" rx="4" />
+            <rect class="hazard" x="196" y="182" width="72" height="8" rx="2" />
+            <path class="tide" d="M0 60 C 60 20, 100 20, 128 60 S 200 180, 232 180 S 300 120, 332 60 S 420 20, 480 60" />
+            <text class="tick" x="0" y="214">06:00</text><text class="tick" x="104" y="214">09:42</text>
+            <text class="tick" x="208" y="214">12:00</text><text class="tick" x="308" y="214">15:58</text>
+            <text class="tick" x="436" y="214">19:00</text>
+          </svg>
+        </figure>
+      </div>
+
+      <section id="launches" aria-labelledby="launches-h">
+        <h2 id="launches-h">This weekend's windows near you</h2>
+        <p class="lede">Each launch gets its own station, so the times are local to the water you are on. Sample data shown.</p>
+        <table class="launches">
+          <thead><tr><th scope="col">Launch</th><th scope="col">Calm window</th><th scope="col">Wind</th><th scope="col">Watch for</th></tr></thead>
+          <tbody>
+            <tr><td>Kettle Cove</td><td>09:12 to 10:20</td><td>6 kn SW</td><td>Nothing flagged</td></tr>
+            <tr><td>Saco River mouth</td><td>15:31 to 16:24</td><td>11 kn S</td><td class="flag">Ebb over the bar after 16:30</td></tr>
+            <tr><td>Fort Williams</td><td>08:47 to 09:55</td><td>4 kn W</td><td>Fog until 08:30</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="how" aria-labelledby="how-h">
+        <h2 id="how-h">How Slackwater reads the water</h2>
+        <ol class="steps">
+          <li><div><h3>Pick a launch</h3><p>Drop a pin or choose a saved put-in. We match it to the closest tide and current stations.</p></div></li>
+          <li><div><h3>Set your limits</h3><p>Tell us the current and wind you are comfortable in. Defaults follow common sea kayak guidance.</p></div></li>
+          <li><div><h3>Read one chart</h3><p>Calm windows are shaded, hazards are flagged in magenta, and the chart updates when the forecast does.</p></div></li>
+        </ol>
+      </section>
+    </main>
+  </div>
+
+  <section class="close" aria-labelledby="close-h">
+    <div class="wrap">
+      <h2 id="close-h">Plan Saturday before the forecast changes</h2>
+      <p>Free for three launches. No account needed to see a chart.</p>
+      <div class="actions"><a class="btn btn-primary" href="/plan">Plan a trip</a></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap"><span>Slackwater. Tide data from public stations; always check local conditions.</span><span><a href="/privacy">Privacy</a> &nbsp; <a href="/terms">Terms</a></span></div>
+  </footer>
+  <script>document.documentElement.classList.add("js");</script>
+</body>
+</html>

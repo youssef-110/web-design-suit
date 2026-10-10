@@ -1,0 +1,50 @@
+<!doctype html>
+<!-- Fixture: a deliberately generic AI landing page for the B1 brief (Slackwater). The self-test expects these tells to be caught. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>Slackwater</title>
+  <style>
+    body { font-family: Inter, sans-serif; background: #000; }
+    .btn { transition: all .3s ease-in; outline: none; }
+    .card:hover { transform: translateY(-8px); }
+    @keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
+    .pop { animation: pop .8s; }
+  </style>
+</head>
+<body class="text-white">
+  <section class="h-screen flex flex-col items-center justify-center text-center bg-gradient-to-r from-purple-600 to-blue-500">
+    <span class="uppercase tracking-widest text-xs rounded-full px-3 py-1 bg-white/10">✨ Now in beta</span>
+    <h1 class="text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-violet-300">Elevate your paddling — seamlessly</h1>
+    <p class="mt-6 max-w-xl">Unleash the power of next-gen tide intelligence. Slackwater is the cutting-edge platform that empowers kayakers to supercharge every trip.</p>
+    <div class="mt-8 flex gap-4">
+      <button class="btn px-6 py-3 rounded-full bg-white text-black">Get Started →</button>
+      <button class="btn px-6 py-3 rounded-full border border-white">Start Free Trial →</button>
+    </div>
+    <p class="mt-16 animate-bounce">Scroll to explore</p>
+  </section>
+
+  <section class="py-32 px-8">
+    <span class="uppercase tracking-widest text-xs">Features</span>
+    <h2 class="text-5xl font-bold mt-2">Everything You Need</h2>
+    <div class="grid grid-cols-3 gap-8 mt-12">
+      <div class="card pop rounded-2xl p-8 bg-white/5 border border-white/10 shadow-2xl"><div class="text-4xl">🌊</div><h3>Tide Tracking</h3><p>Seamless real-time tides.</p></div>
+      <div class="card pop rounded-2xl p-8 bg-white/5 border border-white/10 shadow-2xl"><div class="text-4xl">🚀</div><h3>Smart Planning</h3><p>Revolutionize your routes.</p></div>
+      <div class="card pop rounded-2xl p-8 bg-white/5 border border-white/10 shadow-2xl"><div class="text-4xl">🛡️</div><h3>Safety First</h3><p>Enterprise-grade safety.</p></div>
+    </div>
+  </section>
+
+  <section class="py-32 px-8 text-center">
+    <h2 class="text-5xl font-bold">Trusted by 99.99% of paddlers</h2>
+    <img src="hero.png" class="mx-auto mt-12 rounded-3xl" />
+    <blockquote class="mt-12">"Slackwater is a game-changer for our club." — John Doe, CEO at Acme</blockquote>
+    <div class="mt-8 underline" onClick="location.href='/signup'">Learn more...</div>
+  </section>
+
+  <script>
+    // ... rest of code for brevity
+    window.addEventListener('scroll', () => {});
+  </script>
+</body>
+</html>
